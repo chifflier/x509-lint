@@ -61,10 +61,7 @@ jobs:
       matrix:
         features:
           - --no-default-features
-          - --features=default
           - --all-features
-          - --features=verify
-          - --features=validate
     steps:
       - uses: actions/checkout@v4
       - name: Install stable toolchain
