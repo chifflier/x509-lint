@@ -5,6 +5,7 @@ use super::{CertificateLint, LintDefinition, LintRegistry, LintResult, LintStatu
 use crate::{certificate_lint, lint_definition};
 
 mod extensions;
+mod name;
 
 const RFC_LINTS: &[(LintDefinition, CertificateLint)] = &[
     (CHECK_VERSION, check_version),
@@ -137,7 +138,7 @@ fn check_notafter_generalizedtime_2049(x509: &X509Certificate) -> LintResult {
 
 /// Return a [`LintRegistry`] containing all RFC lints included in this crate
 pub fn rfc_lints<'a>() -> LintRegistry<'a> {
-    let all_rfc_lints = [RFC_LINTS, extensions::EXTENSION_LINTS].concat();
+    let all_rfc_lints = [RFC_LINTS, name::NAME_LINTS, extensions::EXTENSION_LINTS].concat();
     LintRegistry::new(all_rfc_lints)
 }
 
