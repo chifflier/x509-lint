@@ -21,10 +21,12 @@ mod certificate_lint;
 mod definition;
 mod registry;
 mod result;
+mod rfc;
 mod status;
 
 pub use certificate_lint::*;
 pub use definition::*;
 pub use registry::*;
 pub use result::*;
+pub use rfc::*;
 pub use status::*;
