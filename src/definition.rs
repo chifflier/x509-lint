@@ -1,3 +1,4 @@
+/// Definition of a Lint: name, description, citation (optional)
 #[derive(Debug, Clone)]
 pub struct LintDefinition<'a> {
     /// Lint name (identifier). Must be unique
@@ -9,6 +10,7 @@ pub struct LintDefinition<'a> {
 }
 
 impl<'a> LintDefinition<'a> {
+    /// Build a new lint definition from arguments
     #[inline]
     pub const fn new(name: &'a str, description: &'a str) -> Self {
         Self {
@@ -36,6 +38,7 @@ impl<'a> LintDefinition<'a> {
         self.citation
     }
 
+    /// Add `citation` to the current definition
     #[inline]
     pub const fn with_citation(self, citation: &'a str) -> Self {
         Self {

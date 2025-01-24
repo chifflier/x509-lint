@@ -1,4 +1,4 @@
-use x509_lint::*;
+// use x509_lint::*;
 
 fn main() {
     println!("hello");
