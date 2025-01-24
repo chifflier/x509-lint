@@ -11,6 +11,7 @@ pub type CertificateLint = fn(_x509: &X509Certificate) -> LintResult;
 #[macro_export]
 macro_rules! certificate_lint {
     ($vis:vis $lint_fn:ident, $lvl:expr, $lint:expr) => {
+        #[allow(unused_qualifications)]
         $vis fn $lint_fn(x509: &x509_parser::certificate::X509Certificate) -> LintResult {
             let f = $lint;
             if f(x509) {
