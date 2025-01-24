@@ -36,7 +36,12 @@ certificate_lint!(
     |x509: &X509Certificate| x509.raw_serial().is_empty()
 );
 
-lint_definition!(SERIAL_MSB, "rfc:serial_msb", "Serial Number is negative");
+lint_definition!(
+    SERIAL_MSB,
+    "rfc:serial_msb",
+    "Serial Number is negative",
+    "RFC5280: 4.1.2.2"
+);
 certificate_lint!(
     check_serial_msb,
     LintStatus::Warn,
