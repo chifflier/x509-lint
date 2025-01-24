@@ -7,7 +7,29 @@ on:
   schedule:
     - cron: '0 18 * * *'
 
+env:
+  LIB: x509_lint
+
 jobs:
+  check_lib:
+    name: Check (lib)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        rust:
+          - stable
+          - 1.70.0
+          - nightly
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: ${{ matrix.rust }}
+      - name: Cargo update
+        run: cargo update -p ${{ env.LIB }}
+      - name: Cargo check
+        run: RUSTFLAGS="-D warnings" cargo check -p ${{ env.LIB }}
+
   check:
     name: Check
     runs-on: ubuntu-latest
@@ -15,7 +37,7 @@ jobs:
       matrix:
         rust:
           - stable
-          - 1.70.0
+          - 1.74.0
           - nightly
     steps:
       - uses: actions/checkout@v4
@@ -33,7 +55,7 @@ jobs:
       matrix:
         rust:
           - stable
-          - 1.70.0
+          - 1.74.0
           - nightly
     steps:
       - uses: actions/checkout@v4
