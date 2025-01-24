@@ -103,6 +103,7 @@ jobs:
   semver:
     name: Check semver compatibility
     runs-on: ubuntu-latest
+    continue-on-error: true # NOTE: to be removed after first crate release
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
