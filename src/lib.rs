@@ -17,10 +17,12 @@ unreachable_pub
 ))]
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
+mod certificate_lint;
 mod definition;
 mod result;
 mod status;
 
+pub use certificate_lint::*;
 pub use definition::*;
 pub use result::*;
 pub use status::*;
