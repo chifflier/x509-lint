@@ -18,14 +18,24 @@ pub struct Args {
     // // Enable color for output
     // #[clap(long)]
     // color: bool,
+    /// Print all registered lints and exit
+    #[clap(long)]
+    print_lints: bool,
 
-    // Input file
+    /// Input file
     #[clap(group = "input")]
     input_file: Option<String>,
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    match process_certs() {
+    let args = Args::parse();
+
+    if args.print_lints {
+        print_lints();
+        std::process::exit(0);
+    }
+
+    match process_certs(&args) {
         Ok(_) => Ok(()),
         Err(e) => {
             println!("{e}");
@@ -34,9 +44,25 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
 }
 
-fn process_certs() -> Result<(), Box<dyn Error>> {
-    let args = Args::parse();
+fn print_lints() {
+    let registry = rfc_lints();
 
+    for (lint_definition, _) in registry.lints() {
+        let mut s = String::new();
+        s += &format!(
+            " - [{}]: {}",
+            lint_definition.name().bold(),
+            lint_definition.description()
+        );
+        if let Some(citation) = lint_definition.citation() {
+            s += &(format!("  citation:{}", citation.bright_white()));
+        }
+
+        println!("{s}");
+    }
+}
+
+fn process_certs(args: &Args) -> Result<(), Box<dyn Error>> {
     let registry = rfc_lints();
 
     // read file or stdin
@@ -69,7 +95,7 @@ fn process_certs() -> Result<(), Box<dyn Error>> {
                         eprintln!("Warning: PEM is not a certificate?!");
                     }
                     let der = &pem.contents;
-                    x509_lint(der, &args, &registry)?;
+                    x509_lint(der, args, &registry)?;
                 }
             }
         }
@@ -81,15 +107,15 @@ fn process_certs() -> Result<(), Box<dyn Error>> {
                 eprintln!("Warning: PEM is not a certificate?!");
             }
             let der = &pem.contents;
-            x509_lint(der, &args, &registry)?;
+            x509_lint(der, args, &registry)?;
         }
     } else if test_base64(data) {
         // base64
         let der = STANDARD.decode(data)?;
-        x509_lint(&der, &args, &registry)?;
+        x509_lint(&der, args, &registry)?;
     } else if data.starts_with(&[0x30]) {
         // DER
-        x509_lint(data, &args, &registry)?;
+        x509_lint(data, args, &registry)?;
     } else {
         eprintln!("Could not determine input format");
         std::process::exit(2);
