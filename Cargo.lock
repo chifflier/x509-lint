@@ -300,7 +300,7 @@ checksum = "11cd88e12b17c6494200a9c1b683a04fcac9573ed74cd1b62aeb2727c5592243"
 name = "x509-lint"
 version = "0.1.0"
 dependencies = [
- "x509-parser",
+ "x509_lint",
 ]
 
 [[package]]
@@ -317,4 +317,11 @@ dependencies = [
  "rusticata-macros",
  "thiserror",
  "time",
+]
+
+[[package]]
+name = "x509_lint"
+version = "0.1.0"
+dependencies = [
+ "x509-parser",
 ]

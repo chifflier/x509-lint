@@ -1,5 +1,5 @@
 [package]
-name = "x509-lint"
+name = "x509_lint"
 version = "0.1.0"
 description = "X.509 linter (RFC 5280 certificates and CRLs)"
 license = "MIT OR Apache-2.0"
@@ -17,7 +17,4 @@ all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
 
 [dependencies]
-x509_lint = { path="./x509_lint" }
-
-[patch.crates-io]
-x509-parser = { git="https://github.com/rusticata/x509-parser", branch="x509-parser-visitor-v0.1" }
+x509-parser = { version = "0.16.0" }
