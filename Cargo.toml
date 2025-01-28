@@ -21,7 +21,6 @@ base64 = "0.22"
 clap = { version = "4.5", features = ["cargo", "derive"] }
 colored = "2.0"
 x509_lint = { path = "./x509_lint" }
-x509-parser = { version = "0.16.0" }
 
 [patch.crates-io]
 x509-parser = { git = "https://github.com/rusticata/x509-parser", branch = "x509-parser-visitor-v0.1" }

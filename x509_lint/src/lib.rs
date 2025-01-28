@@ -30,3 +30,6 @@ pub use registry::*;
 pub use result::*;
 pub use rfc::*;
 pub use status::*;
+
+// re-exports
+pub use x509_parser;

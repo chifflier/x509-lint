@@ -1,7 +1,7 @@
 set positional-arguments
 
 build:
-    cargo build --all-features
+    cargo build --all-targets --all-features
 
 build-doc:
     RUSTDOCFLAGS="--cfg docsrs" cargo +nightly doc --workspace --no-deps --all-features

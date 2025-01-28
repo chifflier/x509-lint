@@ -1,3 +1,5 @@
+use x509_lint::x509_parser;
+
 use base64::{engine::general_purpose::STANDARD, Engine as _};
 use colored::Colorize;
 use std::error::Error;
