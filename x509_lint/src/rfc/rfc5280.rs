@@ -18,6 +18,7 @@ pub(super) const RFC_LINTS: &[(LintDefinition, CertificateLint)] = &[
     (CHECK_YEAR_POST2049_UTC, check_notafter_generalizedtime_2049),
     (CHECK_ISSUERID_V1, check_issuer_uniqueid_v1),
     (CHECK_SUBJECTID_V1, check_subject_uniqueid_v1),
+    (CHECK_MATCHING_SIG_ALGS, signature_algorithms_must_match_oid),
 ];
 
 lint_definition!(CHECK_VERSION, "rfc:check_version", "Invalid X.509 version");
@@ -128,6 +129,23 @@ fn check_notafter_generalizedtime_2049(x509: &X509Certificate) -> LintResult {
     let year_notafter = validity.not_after.to_datetime().year();
     if year_notafter > 2049 && validity.not_after.is_utctime() {
         LintResult::new_details(LintStatus::Warn, "notAfter".into())
+    } else {
+        LintResult::pass()
+    }
+}
+
+lint_definition!(
+    CHECK_MATCHING_SIG_ALGS,
+    "rfc:signature_algorithms_must_match",
+    "The signatureAlgorithm field MUST contain the same algorithm identifier as the signature field
+    in the sequence tbsCertificate",
+    "RFC5280: 4.1.1.2"
+);
+fn signature_algorithms_must_match_oid(x509: &X509Certificate) -> LintResult {
+    let sig = &x509.signature_algorithm;
+    let sig_tbs = &x509.tbs_certificate.signature;
+    if sig.algorithm != sig_tbs.algorithm {
+        LintResult::new_details(LintStatus::Error, "OID".into())
     } else {
         LintResult::pass()
     }
