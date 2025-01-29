@@ -523,8 +523,9 @@ dependencies = [
 
 [[package]]
 name = "x509-parser"
-version = "0.16.0"
-source = "git+https://github.com/rusticata/x509-parser?branch=x509-parser-visitor-v0.1#8fdba549f6f1e8e21e6e23d54bd59f733c0dcd4f"
+version = "0.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4569f339c0c402346d4a75a9e39cf8dad310e287eef1ff56d4c68e5067f53460"
 dependencies = [
  "asn1-rs",
  "data-encoding",
