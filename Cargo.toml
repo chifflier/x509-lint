@@ -20,5 +20,5 @@ rustdoc-args = ["--cfg", "docsrs"]
 base64 = "0.22"
 clap = { version = "4.5", features = ["cargo", "derive"] }
 colored = "2.0"
-x509_lint = { path = "./x509_lint" }
+x509_lint = { version = "0.1", path = "./x509_lint" }
 
