@@ -512,16 +512,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "589f6da84c646204747d1270a2a5661ea66ed1cced2631d546fdfb155959f9ec"
 
 [[package]]
-name = "x509-lint"
-version = "0.1.0"
-dependencies = [
- "base64",
- "clap",
- "colored",
- "x509_lint",
-]
-
-[[package]]
 name = "x509-parser"
 version = "0.17.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -543,4 +533,14 @@ name = "x509_lint"
 version = "0.1.0"
 dependencies = [
  "x509-parser",
+]
+
+[[package]]
+name = "x509lint"
+version = "0.1.0"
+dependencies = [
+ "base64",
+ "clap",
+ "colored",
+ "x509_lint",
 ]

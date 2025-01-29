@@ -1,5 +1,5 @@
 [package]
-name = "x509-lint"
+name = "x509lint"
 version = "0.1.0"
 description = "X.509 linter (RFC 5280 certificates and CRLs)"
 license = "MIT OR Apache-2.0"
