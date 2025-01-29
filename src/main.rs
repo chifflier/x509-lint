@@ -8,14 +8,14 @@ use x509_lint::{rfc_lints, LintRegistry};
 use x509_parser::pem::*;
 use x509_parser::prelude::{FromDer, X509Certificate};
 
-use clap::Parser;
+use clap::{CommandFactory, FromArgMatches, Parser};
 
 /// Extract information in JSON format from a X.509 certificate
 #[derive(Debug, Parser)]
-#[clap(name = "x509-to-json")]
+#[clap(name = "x509lint")]
 #[clap(author)]
 #[clap(version)]
-#[clap(about = "Extract information in JSON format from a X.509 certificate", long_about = None)]
+#[clap(about = "X.509 Certificates and Certificate Revocation List linter written in Rust", long_about = None)]
 pub struct Args {
     // // Enable color for output
     // #[clap(long)]
@@ -24,14 +24,23 @@ pub struct Args {
     #[clap(long)]
     print_lints: bool,
 
-    /// Input file
+    /// Input file, or standard input if none was provided
     #[clap(group = "input")]
     input_file: Option<String>,
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let args = Args::parse();
+    let cli = Args::command().help_template(
+        "\
+{before-help}{name} {version} - {author-with-newline}
+{about-with-newline}
+{usage-heading} {usage}
 
+{all-args}{after-help}
+",
+    );
+    let matches = cli.get_matches();
+    let args = Args::from_arg_matches(&matches).unwrap();
     if args.print_lints {
         print_lints();
         std::process::exit(0);
