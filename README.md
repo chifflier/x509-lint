@@ -4,16 +4,17 @@
 
 # x509-lint
 
-This repository contains a Rust library ([x509_lint](x509_lint)) to define and run lints on X.509 objects (Certificates
-and CRLs), and a tool ([x509-lint](src/main.rs)) to run lints on certificate files.
+This repository contains both a Rust library ([x509_lint](x509_lint)) to define
+and run lints on X.509 objects (Certificates and CRLs), and a tool
+([x509lint](src/main.rs)) to run preconfigured lints on certificate files.
 
-# `x509-lint` binary tool
+# `x509lint` binary tool
 
-Compile and install `x509-lint`.
+Compile and install `x509lint`.
 
 Run the binary to display lint warnings and errors on certificates:
 ```shell
-$ x509-lint issuerFieldMissing.pem
+$ x509lint issuerFieldMissing.pem
 Subject: C=US, ST=FL, L=Tallahassee, streetAddress=3210 Holly Mill Run, postalCode=30062, O=Extreme Discord, OU=Chaos, CN=gov.us
   [error] The issuer field MUST contain a non-empty distinguished name (DN)  citation:RFC5280: 4.1.2.4
 ```
