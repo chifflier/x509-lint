@@ -1,6 +1,6 @@
 [package]
 name = "x509_lint"
-version = "0.1.0"
+version = "0.2.0"
 description = "X.509 linter (RFC 5280 certificates and CRLs)"
 license = "MIT OR Apache-2.0"
 keywords = ["X509","Certificate","lint"]
