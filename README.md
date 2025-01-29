@@ -1,16 +1,27 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE-MIT)
 [![Apache License 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](./LICENSE-APACHE)
+[![docs.rs](https://docs.rs/x509_lint/badge.svg)](https://docs.rs/x509_lint)
+[![crates.io](https://img.shields.io/crates/v/x509_lint.svg)](https://crates.io/crates/x509_lint)
+[![Download numbers](https://img.shields.io/crates/d/x509_lint.svg)](https://crates.io/crates/x509_lint)
 [![Github CI](https://github.com/chifflier/x509-lint/workflows/Continuous%20integration/badge.svg)](https://github.com/chifflier/x509-lint/actions)
+[![Minimum rustc version](https://img.shields.io/badge/rustc-1.70.0+-lightgray.svg)](#rust-version-requirements)
 
 # x509-lint
 
-This repository contains both a Rust library ([x509_lint](x509_lint)) to define
-and run lints on X.509 objects (Certificates and CRLs), and a tool
-([x509lint](src/main.rs)) to run preconfigured lints on certificate files.
+`x509-lint` is a X.509 Certificates and Certificate Revocation List linter written in Rust.
+It runs a set of checks, taken from
+[RFC5280](https://datatracker.ietf.org/doc/html/rfc5280) and other sources.
+
+This repository provides both the command-line tool ([`x509lint`](https://crates.io/crates/x509lint))
+and a Rust library ([`x509_lint`](https://crates.io/crates/x509_lint)) which can be
+embeded in other Rust programs to use either the included lints, or custom ones.
 
 # `x509lint` binary tool
 
-Compile and install `x509lint`.
+Compile and install `x509lint`:
+```shell
+$ cargo install x509lint
+```
 
 Run the binary to display lint warnings and errors on certificates:
 ```shell
