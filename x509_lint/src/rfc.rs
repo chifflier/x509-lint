@@ -1,18 +1,19 @@
-use super::{CertificateLint, LintDefinition, LintRegistry, LintResult, LintStatus};
+use super::{CertificateLint, LintDefinition, CertificateLintRegistry, LintResult, LintStatus};
 
 mod extensions;
 mod name;
 mod rfc5280;
 
-/// Return a [`LintRegistry`] containing all RFC lints included in this crate
-pub fn rfc_lints<'a>() -> LintRegistry<'a> {
+/// Return a [`CertificateLintRegistry`] containing all RFC lints included in this crate
+/// for X.509 Certificates
+pub fn rfc_lints<'a>() -> CertificateLintRegistry<'a> {
     let all_rfc_lints = [
         rfc5280::RFC_LINTS,
         name::NAME_LINTS,
         extensions::EXTENSION_LINTS,
     ]
     .concat();
-    LintRegistry::new(all_rfc_lints)
+    CertificateLintRegistry::new(all_rfc_lints)
 }
 
 #[cfg(test)]

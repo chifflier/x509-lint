@@ -4,7 +4,7 @@ use base64::{engine::general_purpose::STANDARD, Engine as _};
 use colored::Colorize;
 use std::error::Error;
 use std::io;
-use x509_lint::{rfc_lints, LintRegistry};
+use x509_lint::{rfc_lints, CertificateLintRegistry};
 use x509_parser::pem::*;
 use x509_parser::prelude::{FromDer, X509Certificate};
 
@@ -135,7 +135,7 @@ fn process_certs(args: &Args) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn x509_lint(der: &[u8], _args: &Args, registry: &LintRegistry) -> Result<(), Box<dyn Error>> {
+fn x509_lint(der: &[u8], _args: &Args, registry: &CertificateLintRegistry) -> Result<(), Box<dyn Error>> {
     let (_rem, x509) = X509Certificate::from_der(der)?;
 
     println!("Subject: {}", x509.subject());

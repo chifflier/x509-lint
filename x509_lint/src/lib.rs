@@ -18,6 +18,7 @@ unreachable_pub
 #![cfg_attr(docsrs, feature(doc_cfg))]
 
 mod certificate_lint;
+mod crl_lint;
 mod definition;
 mod registry;
 mod result;
@@ -25,6 +26,7 @@ mod rfc;
 mod status;
 
 pub use certificate_lint::*;
+pub use crl_lint::*;
 pub use definition::*;
 pub use registry::*;
 pub use result::*;
