@@ -12,6 +12,15 @@ readme = "README.md"
 edition = "2021"
 rust-version = "1.74"
 
+include = [
+  "CHANGELOG.md",
+  "LICENSE-*",
+  "README.md",
+  ".gitignore",
+  "Cargo.toml",
+  "src/*.rs",
+]
+
 [package.metadata.docs.rs]
 all-features = true
 rustdoc-args = ["--cfg", "docsrs"]
