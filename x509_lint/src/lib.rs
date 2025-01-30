@@ -28,6 +28,52 @@
 //!
 //! `run_lints` returns a list of [`LintDefinition`] and [`LintResult`].
 //! The lifetime of definitions is the lifetime of the registry containing them.
+//!
+//! Similarly, [`crl_rfc_lints`] returns a registry for CRL lints.
+//!
+//! # Adding lints
+//!
+//! To add a new lint to a registry, a [`LintDefinition`] and a function are required.
+//! Helpers macros [`certificate_lint`] and [`crl_lint`] are provided to simplify declaration.
+//!
+//! Example:
+//!
+//! ```rust
+//! use x509_lint::*;
+//! use x509_lint::x509_parser::prelude::X509Certificate;
+//!
+//! lint_definition!(
+//!     CHECK_VERSION /* definition name */,
+//!     "rfc:check_version" /* lint name (must be unique) */,
+//!     "Invalid X.509 version" /* lint description */,
+//!     "RFC5280: 4.1.2.1" /* lint citation (optional) */);
+//!
+//! fn test_certificate_version(x509: &X509Certificate<'_>) -> LintResult {
+//!     if x509.version.0 >= 3 {
+//!         LintResult::new(LintStatus::Error)
+//!     } else {
+//!         LintResult::pass()
+//!     }
+//! }
+//!
+//! // adding to a registry
+//! let mut registry = CertificateLintRegistry::default();
+//! registry.insert(CHECK_VERSION, test_certificate_version);
+//! ```
+//!
+//! The `LintResult` can also provide some details (see [`LintDetails`]):
+//! ```rust
+//! # use x509_lint::*;
+//! # use x509_lint::x509_parser::prelude::X509Certificate;
+//! # fn test_certificate_version(x509: &X509Certificate<'_>) -> LintResult {
+//! if x509.version.0 >= 3 {
+//!     let details = LintDetails::from("details on lint error");
+//!     LintResult::new(LintStatus::Error).with_details(details)
+//! } else {
+//!     LintResult::pass()
+//! }
+//! # }
+//! ```
 
 #![deny(/*missing_docs,*/
     unstable_features,
