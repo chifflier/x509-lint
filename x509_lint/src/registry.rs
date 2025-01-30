@@ -30,6 +30,13 @@ impl<'a> CertificateLintRegistry<'a> {
         self.lints.append(&mut other.lints);
     }
 
+    /// Filter lints, keeping only lints with name matching the provided filter
+    ///
+    /// Currently, the matching function is `starts_with`, and only one filter can be provided
+    pub fn filter(&mut self, filter: &str) {
+        self.lints.retain(|(def, _)| def.name.starts_with(filter));
+    }
+
     /// Run lint functions on the certificate, returning only the results of lints not returning `Pass`
     pub fn run_lints(
         &'a self,
@@ -45,6 +52,13 @@ impl<'a> CertificateLintRegistry<'a> {
                 }
             })
             .collect()
+    }
+}
+
+impl<'a> FromIterator<(LintDefinition<'a>, CertificateLint)> for CertificateLintRegistry<'a> {
+    fn from_iter<T: IntoIterator<Item = (LintDefinition<'a>, CertificateLint)>>(iter: T) -> Self {
+        let v = iter.into_iter().collect();
+        Self::new(v)
     }
 }
 
@@ -76,6 +90,13 @@ impl<'a> CRLLintRegistry<'a> {
         self.lints.append(&mut other.lints);
     }
 
+    /// Filter lints, keeping only lints with name matching the provided filter
+    ///
+    /// Currently, the matching function is `starts_with`, and only one filter can be provided
+    pub fn filter(&mut self, filter: &str) {
+        self.lints.retain(|(def, _)| def.name.starts_with(filter));
+    }
+
     /// Run lint functions on the CRL, returning only the results of lints not returning `Pass`
     pub fn run_lints(
         &'a self,
@@ -91,5 +112,12 @@ impl<'a> CRLLintRegistry<'a> {
                 }
             })
             .collect()
+    }
+}
+
+impl<'a> FromIterator<(LintDefinition<'a>, CRLLint)> for CRLLintRegistry<'a> {
+    fn from_iter<T: IntoIterator<Item = (LintDefinition<'a>, CRLLint)>>(iter: T) -> Self {
+        let v = iter.into_iter().collect();
+        Self::new(v)
     }
 }
