@@ -1,8 +1,8 @@
-use x509_parser::certificate::X509Certificate;
 use x509_parser::x509::X509Version;
+use x509_parser::{certificate::X509Certificate, prelude::CertificateRevocationList};
 
 use super::{CertificateLint, LintDefinition, LintResult, LintStatus};
-use crate::{certificate_lint, lint_definition};
+use crate::{certificate_lint, crl_lint, lint_definition, CRLLint};
 
 pub(super) const RFC_LINTS: &[(LintDefinition, CertificateLint)] = &[
     (CHECK_VERSION, check_version),
@@ -19,6 +19,14 @@ pub(super) const RFC_LINTS: &[(LintDefinition, CertificateLint)] = &[
     (CHECK_ISSUERID_V1, check_issuer_uniqueid_v1),
     (CHECK_SUBJECTID_V1, check_subject_uniqueid_v1),
     (CHECK_MATCHING_SIG_ALGS, signature_algorithms_must_match_oid),
+];
+
+pub(super) const CRL_RFC_LINTS: &[(LintDefinition, CRLLint)] = &[
+    (CHECK_VERSION, crl_version),
+    (
+        CRL_MATCHING_SIG_ALGS,
+        crl_signature_algorithms_must_match_oid,
+    ),
 ];
 
 lint_definition!(CHECK_VERSION, "rfc:check_version", "Invalid X.509 version");
@@ -144,6 +152,29 @@ lint_definition!(
 fn signature_algorithms_must_match_oid(x509: &X509Certificate) -> LintResult {
     let sig = &x509.signature_algorithm;
     let sig_tbs = &x509.tbs_certificate.signature;
+    if sig.algorithm != sig_tbs.algorithm {
+        LintResult::new_details(LintStatus::Error, "OID".into())
+    } else {
+        LintResult::pass()
+    }
+}
+
+crl_lint!(
+    crl_version,
+    LintStatus::Error,
+    |crl: &CertificateRevocationList| crl.version().unwrap_or(X509Version::V1).0 >= 2
+);
+
+lint_definition!(
+    CRL_MATCHING_SIG_ALGS,
+    "rfc:crl_signature_algorithms_must_match",
+    "The signatureAlgorithm field MUST contain the same algorithm identifier as the signature field
+    in the sequence CertificateList",
+    "RFC5280: 5.1.1.2"
+);
+fn crl_signature_algorithms_must_match_oid(crl: &CertificateRevocationList) -> LintResult {
+    let sig = &crl.signature_algorithm;
+    let sig_tbs = &crl.tbs_cert_list.signature;
     if sig.algorithm != sig_tbs.algorithm {
         LintResult::new_details(LintStatus::Error, "OID".into())
     } else {

@@ -1,5 +1,5 @@
 use x509_lint::x509_parser::prelude::CertificateRevocationList;
-use x509_lint::{x509_parser, CRLLintRegistry, LintDefinition, LintResult};
+use x509_lint::{crl_rfc_lints, x509_parser, CRLLintRegistry, LintDefinition, LintResult};
 
 use base64::{engine::general_purpose::STANDARD, Engine as _};
 use colored::Colorize;
@@ -70,26 +70,38 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 fn print_lints() {
+    println!("Certificate Lints:");
     let cert_registry = rfc_lints();
 
     for (lint_definition, _) in cert_registry.lints() {
-        let mut s = String::new();
-        s += &format!(
-            " - [{}]: {}",
-            lint_definition.name().bold(),
-            lint_definition.description()
-        );
-        if let Some(citation) = lint_definition.citation() {
-            s += &(format!("  citation:{}", citation.bright_white()));
-        }
-
-        println!("{s}");
+        print_lint(lint_definition);
     }
+
+    println!("CRL Lints:");
+    let crl_registry = crl_rfc_lints();
+
+    for (lint_definition, _) in crl_registry.lints() {
+        print_lint(lint_definition);
+    }
+}
+
+fn print_lint(lint_definition: &LintDefinition<'_>) {
+    let mut s = String::new();
+    s += &format!(
+        " - [{}]: {}",
+        lint_definition.name().bold(),
+        lint_definition.description()
+    );
+    if let Some(citation) = lint_definition.citation() {
+        s += &(format!("  citation:{}", citation.bright_white()));
+    }
+
+    println!("{s}");
 }
 
 fn process_certs(args: &Args) -> Result<(), Box<dyn Error>> {
     let cert_registry = rfc_lints();
-    let crl_registry = CRLLintRegistry::default();
+    let crl_registry = crl_rfc_lints();
 
     let reg = Registries {
         cert: cert_registry,

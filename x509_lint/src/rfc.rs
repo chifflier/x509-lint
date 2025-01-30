@@ -1,3 +1,5 @@
+use crate::CRLLintRegistry;
+
 use super::{CertificateLint, CertificateLintRegistry, LintDefinition, LintResult, LintStatus};
 
 mod extensions;
@@ -14,6 +16,13 @@ pub fn rfc_lints<'a>() -> CertificateLintRegistry<'a> {
     ]
     .concat();
     CertificateLintRegistry::new(all_rfc_lints)
+}
+
+/// Return a [`CRLLintRegistry`] containing all RFC lints included in this crate
+/// for X.509 Certificate Revocation List (CRL)
+pub fn crl_rfc_lints<'a>() -> CRLLintRegistry<'a> {
+    let all_rfc_lints = [rfc5280::CRL_RFC_LINTS, extensions::CRL_EXTENSION_LINTS].concat();
+    CRLLintRegistry::new(all_rfc_lints)
 }
 
 #[cfg(test)]

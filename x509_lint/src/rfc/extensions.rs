@@ -1,5 +1,6 @@
 use x509_parser::certificate::X509Certificate;
 use x509_parser::extensions::*;
+use x509_parser::prelude::CertificateRevocationList;
 use x509_parser::x509::X509Version;
 
 use crate::*;
@@ -11,6 +12,9 @@ pub(crate) const EXTENSION_LINTS: &[(LintDefinition, CertificateLint)] = &[
     (CERT_EXTENSION_PARSEERROR, cert_extensions_parse_error),
     (CERT_EXT_SAN_INVALID_CHARSET, cert_ext_san_invalid_charset),
 ];
+
+pub(crate) const CRL_EXTENSION_LINTS: &[(LintDefinition, CRLLint)] =
+    &[(CRL_EXTENSION_NOTV2, crl_extensions_notv2)];
 
 lint_definition!(
     CERT_EXTENSION_NOTV3,
@@ -79,3 +83,15 @@ pub(super) fn cert_ext_san_invalid_charset(x509: &X509Certificate) -> LintResult
     }
     LintResult::pass()
 }
+
+lint_definition!(
+    CRL_EXTENSION_NOTV2,
+    "rfc:crl_extensions_notv2",
+    "Version is not V2 but extensions are present",
+    "RFC5280: 5.1.2.1"
+);
+crl_lint!(
+    pub(super) crl_extensions_notv2,
+    LintStatus::Warn,
+    |crl: &CertificateRevocationList| !crl.extensions().is_empty() && crl.version() != Some(X509Version::V2)
+);

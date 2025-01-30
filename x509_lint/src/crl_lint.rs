@@ -12,7 +12,7 @@ pub type CRLLint = fn(_crl: &CertificateRevocationList) -> LintResult;
 macro_rules! crl_lint {
     ($vis:vis $lint_fn:ident, $lvl:expr, $lint:expr) => {
         #[allow(unused_qualifications)]
-        $vis fn $lint_fn(crl: &x509_parser::crl::CertificateRevocationList) -> LintResult {
+        $vis fn $lint_fn(crl: &x509_parser::revocation_list::CertificateRevocationList) -> LintResult {
             let f = $lint;
             if f(crl) {
                 // eprintln!("lint fail: {}", $lint_name);
