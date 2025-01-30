@@ -39,6 +39,9 @@ jobs:
           - stable
           - 1.74.0
           - nightly
+        manifest:
+          - Cargo.toml
+          - x509_lint/Cargo.toml
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@master
@@ -46,7 +49,7 @@ jobs:
           toolchain: ${{ matrix.rust }}
       - name: Cargo update
         run: cargo update
-      - run: RUSTFLAGS="-D warnings" cargo check
+      - run: RUSTFLAGS="-D warnings" cargo check --manifest-path ${{ matrix.manifest }}
 
   check-all-features:
     name: Check All Features
@@ -84,11 +87,14 @@ jobs:
         features:
           - --no-default-features
           - --all-features
+        manifest:
+          - Cargo.toml
+          - x509_lint/Cargo.toml
     steps:
       - uses: actions/checkout@v4
       - name: Install stable toolchain
         uses: dtolnay/rust-toolchain@stable
-      - run: cargo test ${{ matrix.features }}
+      - run: cargo test --manifest-path ${{ matrix.manifest }} ${{ matrix.features }}
 
   fmt:
     name: Rustfmt
@@ -117,10 +123,15 @@ jobs:
     runs-on: ubuntu-latest
     env:
       RUSTDOCFLAGS: --cfg docsrs
+    strategy:
+      matrix:
+        manifest:
+          - Cargo.toml
+          - x509_lint/Cargo.toml
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@nightly
-      - run: cargo doc --workspace --no-deps --all-features
+      - run: cargo doc --manifest-path ${{ matrix.manifest }} --no-deps --all-features
 
   semver:
     name: Check semver compatibility
