@@ -118,7 +118,7 @@ fn process_certs(args: &Args) -> Result<(), Box<dyn Error>> {
             // skip text
             if let Some(index) = text.find("\n---") {
                 // skip 1 byte (\n) and test if PEM
-                let data = &text[index + 1..].as_bytes();
+                let data = &text.as_bytes()[index + 1..];
 
                 for pem in Pem::iter_from_buffer(data) {
                     let pem = pem?;
