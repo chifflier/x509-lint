@@ -1,4 +1,4 @@
-use super::{CertificateLint, LintDefinition, CertificateLintRegistry, LintResult, LintStatus};
+use super::{CertificateLint, CertificateLintRegistry, LintDefinition, LintResult, LintStatus};
 
 mod extensions;
 mod name;

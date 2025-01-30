@@ -1,4 +1,5 @@
-use x509_lint::x509_parser;
+use x509_lint::x509_parser::prelude::CertificateRevocationList;
+use x509_lint::{x509_parser, CRLLintRegistry, LintDefinition, LintResult};
 
 use base64::{engine::general_purpose::STANDARD, Engine as _};
 use colored::Colorize;
@@ -24,9 +25,22 @@ pub struct Args {
     #[clap(long)]
     print_lints: bool,
 
+    /// Force interpreting file as certificate (default: auto-detect)
+    #[clap(long = "cert")]
+    force_cert: bool,
+
+    /// Force interpreting file as CRL (default: auto-detect)
+    #[clap(long = "crl")]
+    force_crl: bool,
+
     /// Input file, or standard input if none was provided
     #[clap(group = "input")]
     input_file: Option<String>,
+}
+
+struct Registries<'a> {
+    cert: CertificateLintRegistry<'a>,
+    crl: CRLLintRegistry<'a>,
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -56,9 +70,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 }
 
 fn print_lints() {
-    let registry = rfc_lints();
+    let cert_registry = rfc_lints();
 
-    for (lint_definition, _) in registry.lints() {
+    for (lint_definition, _) in cert_registry.lints() {
         let mut s = String::new();
         s += &format!(
             " - [{}]: {}",
@@ -74,7 +88,13 @@ fn print_lints() {
 }
 
 fn process_certs(args: &Args) -> Result<(), Box<dyn Error>> {
-    let registry = rfc_lints();
+    let cert_registry = rfc_lints();
+    let crl_registry = CRLLintRegistry::default();
+
+    let reg = Registries {
+        cert: cert_registry,
+        crl: crl_registry,
+    };
 
     // read file or stdin
     let mut input: Box<dyn std::io::Read + 'static> = if let Some(input_file) = &args.input_file {
@@ -106,7 +126,7 @@ fn process_certs(args: &Args) -> Result<(), Box<dyn Error>> {
                         eprintln!("Warning: PEM is not a certificate?!");
                     }
                     let der = &pem.contents;
-                    x509_lint(der, args, &registry)?;
+                    x509_lint(der, args, &reg)?;
                 }
             }
         }
@@ -118,15 +138,15 @@ fn process_certs(args: &Args) -> Result<(), Box<dyn Error>> {
                 eprintln!("Warning: PEM is not a certificate?!");
             }
             let der = &pem.contents;
-            x509_lint(der, args, &registry)?;
+            x509_lint(der, args, &reg)?;
         }
     } else if test_base64(data) {
         // base64
         let der = STANDARD.decode(data)?;
-        x509_lint(&der, args, &registry)?;
+        x509_lint(&der, args, &reg)?;
     } else if data.starts_with(&[0x30]) {
         // DER
-        x509_lint(data, args, &registry)?;
+        x509_lint(data, args, &reg)?;
     } else {
         eprintln!("Could not determine input format");
         std::process::exit(2);
@@ -135,12 +155,19 @@ fn process_certs(args: &Args) -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn x509_lint(der: &[u8], _args: &Args, registry: &CertificateLintRegistry) -> Result<(), Box<dyn Error>> {
-    let (_rem, x509) = X509Certificate::from_der(der)?;
+fn x509_lint(der: &[u8], args: &Args, reg: &Registries) -> Result<(), Box<dyn Error>> {
+    let lint_results = if args.force_cert {
+        x509_cert_lint(der, args, &reg.cert)?
+    } else if args.force_crl {
+        x509_crl_lint(der, args, &reg.crl)?
+    } else {
+        // auto-detect: try as certificate, if not as CRL
+        match x509_cert_lint(der, args, &reg.cert) {
+            Ok(t) => t,
+            Err(_) => x509_crl_lint(der, args, &reg.crl)?,
+        }
+    };
 
-    println!("Subject: {}", x509.subject());
-
-    let lint_results = registry.run_lints(&x509);
     if lint_results.is_empty() {
         println!("  No warnings/errors");
     }
@@ -163,6 +190,32 @@ fn x509_lint(der: &[u8], _args: &Args, registry: &CertificateLintRegistry) -> Re
     }
 
     Ok(())
+}
+
+fn x509_cert_lint<'a>(
+    der: &'a [u8],
+    _args: &'a Args,
+    registry: &'a CertificateLintRegistry<'a>,
+) -> Result<Vec<(&'a LintDefinition<'a>, LintResult)>, Box<dyn Error>> {
+    let (_rem, x509) = X509Certificate::from_der(der)?;
+
+    println!("Subject: {}", x509.subject());
+
+    let lint_results = registry.run_lints(&x509);
+    Ok(lint_results)
+}
+
+fn x509_crl_lint<'a>(
+    der: &'a [u8],
+    _args: &'a Args,
+    registry: &'a CRLLintRegistry<'a>,
+) -> Result<Vec<(&'a LintDefinition<'a>, LintResult)>, Box<dyn Error>> {
+    let (_rem, crl) = CertificateRevocationList::from_der(der)?;
+
+    println!("CRL Issuer: {}", crl.issuer());
+
+    let lint_results = registry.run_lints(&crl);
+    Ok(lint_results)
 }
 
 // attempt to guess if data is base64-encoded
