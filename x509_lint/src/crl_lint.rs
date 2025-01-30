@@ -26,13 +26,15 @@ macro_rules! crl_lint {
 
 #[cfg(test)]
 mod tests {
+    use x509_parser::x509::X509Version;
+
     use super::*;
 
     // test macro for certificate lint definition
     crl_lint!(
         test_lint1,
         LintStatus::Error,
-        |crl: &CertificateRevocationList| crl.version.0 >= 3
+        |crl: &CertificateRevocationList| crl.version().unwrap_or(X509Version::V1).0 >= 2
     );
 
     #[test]
