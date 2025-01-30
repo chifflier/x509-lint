@@ -49,6 +49,18 @@ impl<'a> LintDefinition<'a> {
 }
 
 /// Helper macro to define a new lint
+///
+/// # Example
+///
+/// ```rust
+/// use x509_lint::*;
+///
+/// lint_definition!(
+///     CHECK_VERSION /* definition name */,
+///     "rfc:check_version" /* lint name (must be unique) */,
+///     "Invalid X.509 version" /* lint description */,
+///     "RFC5280: 4.1.2.1" /* lint citation (optional) */);
+/// ``````
 #[macro_export]
 macro_rules! lint_definition {
     ($vis:vis $lint_def:ident, $lint_name:expr, $lint_description:expr) => {
