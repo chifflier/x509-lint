@@ -110,12 +110,17 @@ jobs:
     name: Clippy
     needs: check
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        manifest:
+          - Cargo.toml
+          - x509_lint/Cargo.toml
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@nightly
         with:
           components: clippy
-      - run: cargo clippy --all-features -- -D warnings
+      - run: cargo clippy --manifest-path ${{ matrix.manifest }} --all-features -- -D warnings
 
   doc:
     name: Build documentation
