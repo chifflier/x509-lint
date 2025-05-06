@@ -72,7 +72,7 @@ pub(super) fn cert_ext_san_invalid_charset(x509: &X509Certificate) -> LintResult
                         // should be an ia5string
                         if !s.as_bytes().iter().all(u8::is_ascii) {
                             let details =
-                                LintDetails::new(format!("Invalid charset in SAN entry '{}'", s));
+                                LintDetails::new(format!("Invalid charset in SAN entry '{s}'"));
                             return LintResult::new_details(LintStatus::Warn, details);
                         }
                     }
