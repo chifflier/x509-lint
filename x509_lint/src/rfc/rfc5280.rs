@@ -15,6 +15,7 @@ pub(super) const RFC_LINTS: &[(LintDefinition, CertificateLint)] = &[
         CHECK_YEAR_POST2049_UTC,
         check_notbefore_generalizedtime_2049,
     ),
+    (CHECK_VALIDITY_NEGATIVE, check_validity_negative),
     (CHECK_YEAR_POST2049_UTC, check_notafter_generalizedtime_2049),
     (CHECK_ISSUERID_V1, check_issuer_uniqueid_v1),
     (CHECK_SUBJECTID_V1, check_subject_uniqueid_v1),
@@ -137,6 +138,20 @@ fn check_notafter_generalizedtime_2049(x509: &X509Certificate) -> LintResult {
     let year_notafter = validity.not_after.to_datetime().year();
     if year_notafter > 2049 && validity.not_after.is_utctime() {
         LintResult::new_details(LintStatus::Warn, "notAfter".into())
+    } else {
+        LintResult::pass()
+    }
+}
+
+lint_definition!(
+    CHECK_VALIDITY_NEGATIVE,
+    "rfc:validity_negative",
+    "certificate validity duration MUST NOT be negative"
+);
+fn check_validity_negative(x509: &X509Certificate) -> LintResult {
+    let validity = x509.validity();
+    if validity.not_after <= validity.not_before {
+        LintResult::new_details(LintStatus::Warn, "Validity".into())
     } else {
         LintResult::pass()
     }
