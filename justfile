@@ -17,7 +17,9 @@ check-all:
     cargo check --all-features --examples
 
 check-clippy:
-    cargo clippy --all-features -- -D warnings
+    # cargo clippy --all-features -- -D warnings
+    cargo +nightly clippy --manifest-path x509_lint/Cargo.toml --all-features -- -D warnings &&\
+    cargo +nightly clippy --manifest-path Cargo.toml --all-features -- -D warnings
 
 check-fmt:
     cargo fmt --check

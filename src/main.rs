@@ -195,7 +195,7 @@ fn x509_lint(der: &[u8], args: &Args, reg: &Registries) -> Result<(), Box<dyn Er
             s += &(format!("  citation:{}", citation.bright_white()));
         }
         if let Some(details) = lint_result.details.as_ref() {
-            s += &format!("  details:{}", details);
+            s += &format!("  details:{details}");
         }
 
         println!("{s}");
