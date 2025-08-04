@@ -16,7 +16,7 @@ impl<'a> CertificateLintRegistry<'a> {
     }
 
     /// Return a iterator on the registered lint definitions and functions
-    pub fn lints(&self) -> impl Iterator<Item = &(LintDefinition, CertificateLint)> {
+    pub fn lints(&self) -> impl Iterator<Item = &(LintDefinition<'a>, CertificateLint)> {
         self.lints.iter()
     }
 
@@ -76,7 +76,7 @@ impl<'a> CRLLintRegistry<'a> {
     }
 
     /// Return a iterator on the registered lint definitions and functions
-    pub fn lints(&self) -> impl Iterator<Item = &(LintDefinition, CRLLint)> {
+    pub fn lints(&self) -> impl Iterator<Item = &(LintDefinition<'a>, CRLLint)> {
         self.lints.iter()
     }
 
