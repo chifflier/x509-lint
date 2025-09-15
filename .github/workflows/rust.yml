@@ -38,7 +38,6 @@ jobs:
 
   test:
     name: Test Suite
-    needs: check
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -47,7 +46,6 @@ jobs:
 
   test_features:
     name: Test suite (with features)
-    needs: check-all-features
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -75,7 +73,6 @@ jobs:
 
   clippy:
     name: Clippy
-    needs: check
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -91,7 +88,6 @@ jobs:
 
   doc:
     name: Build documentation
-    needs: check
     runs-on: ubuntu-latest
     env:
       RUSTDOCFLAGS: --cfg docsrs
